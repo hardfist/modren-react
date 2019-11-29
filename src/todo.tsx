@@ -50,7 +50,7 @@ export const TodoApp = () => {
   // local ui状态
   const [value, setValue] = useState("");
   // 业务模型数据
-  const [{ filteredList }, { toggle, addTodo, setFilter }] = useModel({
+  const [{ filteredList }, { setState, toggle, addTodo }] = useModel({
     name: "todo",
     state: initState,
     computed: {
@@ -104,7 +104,11 @@ export const TodoApp = () => {
         <Flex>
           {$enum(FilterType).map(x => {
             return (
-              <div style={{ marginLeft: 10 }} onClick={() => setFilter(x)}>
+              <div
+                style={{ marginLeft: 10 }}
+                onClick={() => setState(s => (s.filter = x))}
+                key={x}
+              >
                 {FilterType[x]}
               </div>
             );

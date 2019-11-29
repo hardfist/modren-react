@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 /* eslint-disable no-loop-func */
 import { useState, useMemo, useRef } from "react";
-import produce from "immer";
+import produce, { Draft } from "immer";
 export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 type AttachEffectsLoading<T> = {
@@ -26,7 +26,6 @@ type ExtractComputed<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => infer B ? B : never
 };
 const devTool = connectDevTools();
-
 export function useModel<
   S extends { [key: string]: any },
   R extends { [key: string]: Function },
@@ -41,7 +40,10 @@ export function useModel<
       AttachEffectsLoading<E> &
       Omit<ExtractComputed<C>, keyof S>
   >,
-  R & E
+  R &
+    E & {
+      setState(f: (args: Writeable<S>) => void): void;
+    }
 ] {
   const {
     name = "woody-hooks",
@@ -50,7 +52,6 @@ export function useModel<
     effects: effectsInModel = {} as E,
     computed: computedInModels = {} as C
   } = model;
-
   const [state, setState] = useState(stateInModel);
   useEffect(() => {
     sendAction({
@@ -80,7 +81,13 @@ export function useModel<
       }
       onceRef.current = true;
       const reducers: any = {};
-      for (const [key, reducerFn] of Object.entries(reducersInModel)) {
+      const enhancedReducers = {
+        ...reducersInModel,
+        setState(f: any) {
+          f(this);
+        }
+      };
+      for (const [key, reducerFn] of Object.entries(enhancedReducers)) {
         reducers[key] = (...args: any[]) => {
           const next = produce(stateRef.current, (draft: any) => {
             reducerFn.apply(draft, args);

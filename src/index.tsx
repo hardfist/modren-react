@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useRef, useImperativeHandle, useEffect } from "react";
 import styled from "styled-components";
+import tw from 'tailwind.macro';
 import delay from "delay";
 import {
   BrowserRouter as Router,
@@ -11,7 +12,12 @@ import {
 } from "react-router-dom";
 import { render } from "react-dom";
 import { TodoApp } from "./todo";
-const ContentWrapper = styled.div``;
+const Button = styled.button`
+  ${tw`bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded font-sans border-none`}
+`
+const ContentWrapper = styled.div`
+ ${tw` bg-antiquewhite`}
+`;
 const NavContainer = styled.div``;
 async function fakeApi(id: string) {
   await delay(1000);
@@ -72,6 +78,7 @@ const Blog = () => {
   return (
     <>
       <h1>blog:</h1>
+      <Button>this is a button</Button>
       <TodoApp />
       <Audio
         id={item_id}
