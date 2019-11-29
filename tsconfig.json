@@ -3,9 +3,12 @@
         "./src/*"
     ],
     "compilerOptions": {
+        "esModuleInterop": true,
+        "strict": true,
         "lib": [
             "dom",
-            "es2015"
+            "es2015",
+            "es2017"
         ],
         "jsx": "react"
     }
